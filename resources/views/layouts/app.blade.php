@@ -31,6 +31,9 @@
             <main>
                 {{ $slot }}
             </main>
+            <footer class="bg-gray-200 text-center py-4 text-sm text-gray-600">
+                © {{ date('Y') }} Tous droits réservés.
+            </footer>
         </div>
     </body>
 </html>
