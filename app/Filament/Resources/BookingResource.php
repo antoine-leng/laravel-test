@@ -31,7 +31,23 @@ class BookingResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Utilisateur')
+                    ->sortable()
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('property.name')
+                    ->label('Propriété')
+                    ->sortable()
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('start_date')
+                    ->label('Début')
+                    ->date(),
+
+                Tables\Columns\TextColumn::make('end_date')
+                    ->label('Fin')
+                    ->date(),
             ])
             ->filters([
                 //
