@@ -1,13 +1,12 @@
 <div class="space-y-4">
-    @auth
-        @if (session()->has('message'))
-            <p class="text-green-600">{{ session('message') }}</p>
-        @endif
+@auth
+    @if ($bookingExists)
+        <p class="text-green-700 text-sm">Vous avez réservé cette propriété.</p>
 
-        @if (session()->has('error'))
-            <p class="text-danger">{{ session('error') }}</p>
-        @endif
-
+        <button wire:click="cancel" class="bg-danger text-white px-4 py-2 rounded mt-2">
+            Annuler la réservation
+        </button>
+    @else
         <form wire:submit.prevent="submit">
             <input type="hidden" wire:model="propertyId" />
 
@@ -27,10 +26,7 @@
                 Réserver
             </button>
         </form>
-    @else
-        <p class="text-danger">
-            Vous devez être connecté pour réserver.
-            <a href="{{ route('login') }}" class="underline text-primary">Se connecter</a>
-        </p>
-    @endauth
+    @endif
+@endauth
+
 </div>

@@ -11,26 +11,24 @@ class BookingManager extends Component
     public $propertyId;
     public $startDate;
     public $endDate;
+    public $bookingExists;
+
+    public function mount() 
+    {
+        if (Auth::check()) {
+            $this->bookingExists = Booking::where('user_id', Auth::id())
+                ->where('property_id', $this->propertyId)
+                ->exists();
+        }
+    }
 
     public function submit()
     {
-        if (!Auth::check()) {
-            session()->flash('error', 'Vous devez être connecté pour réserver.');
-            return;
-        }
         $this->validate([
             'startDate' => 'required|date|after_or_equal:today',
             'endDate' => 'required|date|after_or_equal:startDate',
         ]);
 
-        $alreadyBooked = Booking::where('user_id', Auth::id())
-            ->where('property_id', $this->propertyId)
-            ->exists();
-
-        if ($alreadyBooked) {
-            session()->flash('error', 'Vous avez déjà réservé cette propriété du ' . date('d/m/Y', strtotime($this->startDate)) . ' au ' . date('d/m/Y', strtotime($this->endDate)) . '.');
-            return;
-        }
         Booking::create([
             'user_id' => Auth::id(),
             'property_id' => $this->propertyId,
@@ -38,13 +36,16 @@ class BookingManager extends Component
             'end_date' => $this->endDate,
         ]);
 
-        session()->flash('message', 'Réservation effectuée avec succès du ' . date('d/m/Y', strtotime($this->startDate)) . ' au ' . date('d/m/Y', strtotime($this->endDate)) . '.');
-
-        $this->reset(['startDate', 'endDate']);
+        $this->bookingExists = true;
     }
 
-    public function render()
+    public function cancel()
     {
-        return view('livewire.booking-manager');
+        Booking::where('user_id', Auth::id())
+            ->where('property_id', $this->propertyId)
+            ->delete();
+
+        $this->bookingExists = false;
     }
+
 }
